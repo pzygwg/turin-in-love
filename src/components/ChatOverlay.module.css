@@ -1,0 +1,140 @@
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.suspicionContainer {
+  width: 300px;
+  margin-bottom: 8px;
+  pointer-events: auto;
+}
+
+.suspicionLabel {
+  color: #0ff;
+  font-size: 12px;
+  margin-bottom: 2px;
+  text-shadow: 0 0 10px #0ff;
+}
+
+.suspicionBar {
+  width: 100%;
+  height: 8px;
+  background: #1a1a2e;
+  border: 1px solid #0ff3;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.suspicionFill {
+  height: 100%;
+  background: linear-gradient(90deg, #0f0, #ff0, #f00);
+  transition: width 0.5s ease;
+  border-radius: 4px;
+}
+
+.thought {
+  color: #ff06;
+  font-size: 11px;
+  font-style: italic;
+  margin-bottom: 6px;
+  text-align: center;
+  min-height: 16px;
+  text-shadow: 0 0 8px #ff03;
+}
+
+.messages {
+  width: 500px;
+  max-width: 90vw;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 10px;
+  pointer-events: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #0ff3 transparent;
+}
+
+.msg {
+  font-size: 13px;
+  margin-bottom: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  max-width: 85%;
+  line-height: 1.4;
+}
+
+.robot {
+  background: #0ff1;
+  color: #0ff;
+  border: 1px solid #0ff3;
+  margin-right: auto;
+  text-shadow: 0 0 8px #0ff3;
+}
+
+.player {
+  background: #f0f1;
+  color: #f0f;
+  border: 1px solid #f0f3;
+  margin-left: auto;
+  text-align: right;
+  text-shadow: 0 0 8px #f0f3;
+}
+
+.inputArea {
+  width: 500px;
+  max-width: 90vw;
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  pointer-events: auto;
+}
+
+.input {
+  flex: 1;
+  padding: 10px 14px;
+  background: #1a1a2e;
+  border: 1px solid #0ff3;
+  border-radius: 6px;
+  color: #f0f;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  outline: none;
+}
+
+.input:focus {
+  border-color: #0ff;
+  box-shadow: 0 0 10px #0ff3;
+}
+
+.input::placeholder {
+  color: #f0f5;
+}
+
+.input:disabled {
+  opacity: 0.5;
+}
+
+.sendBtn {
+  padding: 10px 20px;
+  background: #0ff2;
+  border: 1px solid #0ff;
+  border-radius: 6px;
+  color: #0ff;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.sendBtn:hover {
+  background: #0ff3;
+}
+
+.sendBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

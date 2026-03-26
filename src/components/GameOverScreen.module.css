@@ -1,0 +1,47 @@
+.screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #000c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.title {
+  color: #f00;
+  font-size: 48px;
+  text-shadow: 0 0 30px #f00;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: #f006;
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.exchanges {
+  color: #f006;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.restartBtn {
+  padding: 12px 30px;
+  background: #f002;
+  border: 1px solid #f00;
+  border-radius: 6px;
+  color: #f00;
+  font-family: "Courier New", monospace;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.restartBtn:hover {
+  background: #f003;
+}
