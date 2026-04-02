@@ -1,10 +1,13 @@
 import React, { useState, useCallback } from "react";
+import MainMenu from "./components/MainMenu";
+import LevelSelect from "./components/LevelSelect";
 import BabylonScene from "./components/BabylonScene";
 import ChatOverlay from "./components/ChatOverlay";
 import GameOverScreen from "./components/GameOverScreen";
 import TitleCard from "./components/TitleCard";
 
 export default function App() {
+  const [screen, setScreen] = useState("main");
   const [messages, setMessages] = useState([]);
   const [suspicion, setSuspicion] = useState(0);
   const [thought, setThought] = useState("");
@@ -115,6 +118,19 @@ export default function App() {
     setConversationHistory([]);
     handleRobotGreeting();
   }, [handleRobotGreeting]);
+
+  if (screen === "main") {
+    return (
+      <MainMenu
+        onPlay={() => setScreen("levels")}
+        onSucces={() => {/* TODO: achievements screen */}}
+      />
+    );
+  }
+
+  if (screen === "levels") {
+    return <LevelSelect onStart={() => setScreen("game")} />;
+  }
 
   return (
     <>

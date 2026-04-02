@@ -1,0 +1,196 @@
+/* Level Selection Menu */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: 'Gasoek One', sans-serif;
+  background-size: cover;
+  background-position: center;
+}
+
+.overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: #FFD6F2;
+  opacity: 0.9;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1500px;
+  height: 100%;
+  padding: clamp(20px, 4vh, 40px) clamp(20px, 4vw, 60px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-shrink: 0;
+  margin-bottom: clamp(15px, 3vh, 50px);
+  padding: 0 clamp(10px, 2vw, 30px);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2vw, 30px);
+}
+
+.btnRetour {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 700;
+  background-color: #ff5eb8;
+  color: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 3em;
+  padding: clamp(8px, 1.2vh, 15px) clamp(20px, 3vw, 45px);
+  font-size: clamp(1.1rem, 2.5vw, 1.8rem);
+  cursor: pointer;
+  box-shadow: inset 0 -0.3em 0 rgba(0, 0, 0, 0.1), 0 0.3em 0.5em rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s ease;
+}
+
+.btnRetour:active {
+  transform: scale(0.95);
+}
+
+.titleNiveaux {
+  color: white;
+  font-size: clamp(1.2rem, 3.5vw, 2.8rem);
+  letter-spacing: 0.1em;
+  -webkit-text-stroke: 0.04em #ff66cc;
+  text-shadow: 0 0.06em 0.06em rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+}
+
+.progressText {
+  color: white;
+  font-size: clamp(1rem, 2.5vw, 2.2rem);
+  text-shadow: 0 0.1em 0.2em rgba(0, 0, 0, 0.15);
+}
+
+/* Cards */
+.cardsContainer {
+  display: flex;
+  justify-content: center;
+  gap: clamp(20px, 4vw, 60px);
+  flex: 1;
+  min-height: 0;
+  align-items: center;
+}
+
+.card {
+  height: min(100%, 66vh);
+  aspect-ratio: 58 / 66;
+  max-width: 580px;
+  border-radius: clamp(20px, 3.5vw, 50px);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+}
+
+.cardSelected {
+  box-shadow: 0 0 0 clamp(3px, 0.4vw, 6px) #1a8cff;
+}
+
+/* Unlocked Card */
+.cardUnlocked {
+  background-color: #ff4dd2;
+  padding: clamp(5px, 0.7vw, 10px);
+}
+
+.cardWhiteBorder {
+  background-color: white;
+  border-radius: clamp(16px, 3vw, 42px);
+  padding: clamp(3px, 0.4vw, 6px);
+  height: 100%;
+}
+
+.cardImageContainer {
+  background-color: #ccc;
+  border-radius: clamp(14px, 2.5vw, 36px);
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.levelBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(255, 0, 150, 0.3);
+  background-blend-mode: multiply;
+}
+
+.robotImg {
+  position: absolute;
+  bottom: -5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 90%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  z-index: 1;
+}
+
+.stats {
+  position: absolute;
+  top: 5%;
+  left: 6%;
+  color: white;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: bold;
+  font-size: clamp(0.8rem, 1.5vw, 1.4rem);
+  z-index: 2;
+  text-shadow: 0.05em 0.05em 0.2em rgba(0, 0, 0, 0.6);
+}
+
+.levelName {
+  position: absolute;
+  bottom: 5%;
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-size: clamp(1rem, 2.2vw, 2.2rem);
+  z-index: 2;
+  text-shadow: 0.06em 0.06em 0 rgba(0, 0, 0, 0.5), -0.03em -0.03em 0 rgba(0, 0, 0, 0.3);
+  padding: 0 5%;
+}
+
+/* Locked Card */
+.cardLocked {
+  background-color: #8c8c8c;
+  border: clamp(6px, 1vw, 14px) solid #4a4a4a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lockedText {
+  color: white;
+  font-size: clamp(1.5rem, 3.5vw, 3.5rem);
+  text-shadow: 0.08em 0.08em 0 rgba(0, 0, 0, 0.3);
+}
