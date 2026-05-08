@@ -11,5 +11,5 @@ body,
   height: 100%;
   overflow: hidden;
   background: #000;
-  font-family: "Courier New", monospace;
+  font-family: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
