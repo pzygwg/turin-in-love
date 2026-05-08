@@ -22,8 +22,6 @@ Maquette Figma : https://www.figma.com/design/KbPviR7BEI2epKYCdH91Ta/Turing-in-l
 
 Nous avons choisi de faire ce jeu parce que l'idée d'inverser le test de Turing nous semblait plus originale qu'un jeu classique où il faut simplement reconnaître si une machine est humaine ou non. Ici, le joueur est celui qui doit mentir, s'adapter et comprendre comment une IA pourrait interpréter ses phrases.
 
-Le thème du rendez-vous amoureux permet aussi de rendre le concept plus drôle et plus humain. Au lieu d'avoir un simple questionnaire froid, le joueur doit gérer une conversation avec une IA qui peut être curieuse, romantique, méfiante ou maladroite. Cela donne un ton plus narratif au jeu et rend chaque réponse plus importante.
-
 Nous voulions aussi créer une expérience courte mais rejouable, avec plusieurs fins possibles et des succès différents selon la manière dont le joueur parle à MIRA.
 
 ## Lien avec le thème de l'IA
