@@ -11,7 +11,7 @@ app.use(express.json());
 
 // Serve built React app in production
 app.use(express.static(join(__dirname, "dist")));
-app.use("/assets", express.static(join(__dirname, "assets")));
+app.use("/assets", express.static(join(__dirname, "public", "assets")));
 
 const DEEPSEEK_API_URL =
   process.env.DEEPSEEK_API_URL || "https://api.deepseek.com/chat/completions";

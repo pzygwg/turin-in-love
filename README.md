@@ -1,7 +1,7 @@
 # Turing in Love
 
 <p align="center">
-  <img src="assets/logo.png" alt="Logo Turing in Love" width="700">
+  <img src="public/assets/logo.png" alt="Logo Turing in Love" width="700">
 </p>
 
 **Créateurs :** Da Vinha Mathieu et Laporte Logan

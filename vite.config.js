@@ -7,7 +7,6 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": process.env.API_TARGET || "http://localhost:3000",
-      "/assets": process.env.API_TARGET || "http://localhost:3000",
     },
   },
 });
