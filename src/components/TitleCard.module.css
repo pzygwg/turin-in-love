@@ -1,0 +1,27 @@
+.card {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.title {
+  color: #0ff;
+  font-size: 20px;
+  text-shadow: 0 0 20px #0ff5;
+  letter-spacing: 4px;
+}
+
+.subtitle {
+  color: #0ff8;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.counter {
+  color: #0ff6;
+  font-size: 11px;
+  margin-top: 2px;
+}

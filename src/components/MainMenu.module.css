@@ -1,0 +1,126 @@
+.wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(20px, 4vh, 50px);
+  margin-top: -5vh;
+  pointer-events: auto;
+}
+
+.logo {
+  width: clamp(280px, 45vw, 650px);
+  height: auto;
+  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.4));
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(12px, 2vh, 24px);
+}
+
+.btnPlay,
+.btnSucces {
+  font-family: 'Gasoek One', sans-serif;
+  border: none;
+  border-radius: 3em;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btnPlay {
+  background: linear-gradient(180deg, #ff6ec7 0%, #ff3db0 100%);
+  color: white;
+  padding: clamp(14px, 2vh, 22px) clamp(60px, 10vw, 120px);
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
+  box-shadow:
+    inset 0 -4px 0 rgba(0, 0, 0, 0.15),
+    0 4px 15px rgba(255, 61, 176, 0.4);
+}
+
+.btnPlay:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 -4px 0 rgba(0, 0, 0, 0.15),
+    0 8px 25px rgba(255, 61, 176, 0.5);
+}
+
+.btnPlay:active {
+  transform: scale(0.96);
+}
+
+.btnSucces {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: white;
+  padding: clamp(10px, 1.5vh, 16px) clamp(40px, 7vw, 80px);
+  font-size: clamp(1rem, 2vw, 1.6rem);
+  box-shadow:
+    inset 0 -3px 0 rgba(0, 0, 0, 0.1),
+    0 2px 10px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btnSucces:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.btnSucces:active {
+  transform: scale(0.96);
+}
+
+.btnSettings {
+  position: absolute;
+  bottom: clamp(16px, 3vh, 32px);
+  left: clamp(16px, 3vw, 32px);
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: clamp(44px, 5vw, 56px);
+  height: clamp(44px, 5vw, 56px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btnSettings:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.btnSettings:active {
+  transform: scale(0.95);
+}
