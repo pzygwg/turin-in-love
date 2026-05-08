@@ -5,6 +5,7 @@ import BabylonScene from "./components/BabylonScene";
 import ChatOverlay from "./components/ChatOverlay";
 import GameOverScreen from "./components/GameOverScreen";
 import AchievementsScreen from "./components/AchievementsScreen";
+import PauseMenu from "./components/PauseMenu";
 import {
   ACHIEVEMENTS,
   ACHIEVEMENT_ID_ALIASES,
@@ -15,6 +16,7 @@ import {
 } from "./gameData";
 
 const STORAGE_KEY = "inverseturing.achievements.v1";
+const VOLUME_STORAGE_KEY = "inverseturing.volume.v1";
 const LOVE_ENDING = "LOVE";
 const FRIENDS_ENDING = "FRIENDS";
 const BUSTED_ENDING = "BUSTED";
@@ -88,6 +90,18 @@ function saveAchievements(ids) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
 }
 
+function loadVolume() {
+  const parsed = Number(localStorage.getItem(VOLUME_STORAGE_KEY));
+  if (Number.isFinite(parsed)) {
+    return Math.min(1, Math.max(0, parsed));
+  }
+  return 0.72;
+}
+
+function saveVolume(value) {
+  localStorage.setItem(VOLUME_STORAGE_KEY, String(value));
+}
+
 function phaseForExchange(exchange) {
   if (exchange === 2) return "restaurant_event";
   if (exchange === 5) return "system_event";
@@ -158,12 +172,112 @@ export default function App() {
   const [unlockedAchievementIds, setUnlockedAchievementIds] = useState(loadAchievements);
   const [saidExplicitRobot, setSaidExplicitRobot] = useState(false);
   const [biologicalSlips, setBiologicalSlips] = useState(0);
+  const [pauseOpen, setPauseOpen] = useState(false);
+  const [volume, setVolume] = useState(loadVolume);
+  const [achievementBackScreen, setAchievementBackScreen] = useState("main");
   const achievementTimeoutRef = useRef(null);
   const unlockedAchievementIdsRef = useRef(unlockedAchievementIds);
+  const musicRef = useRef(null);
+  const ambianceRef = useRef(null);
 
   useEffect(() => {
     unlockedAchievementIdsRef.current = unlockedAchievementIds;
   }, [unlockedAchievementIds]);
+
+  useEffect(() => {
+    const music = new Audio("/assets/music.mp3");
+    const ambiance = new Audio("/assets/ambiance.wav");
+
+    music.loop = true;
+    ambiance.loop = true;
+    music.preload = "auto";
+    ambiance.preload = "auto";
+
+    musicRef.current = music;
+    ambianceRef.current = ambiance;
+
+    function removeUnlockListeners() {
+      window.removeEventListener("pointerdown", handleFirstInteraction);
+      window.removeEventListener("keydown", handleFirstInteraction);
+    }
+
+    function handleFirstInteraction() {
+      music.play().catch(() => {});
+      removeUnlockListeners();
+    }
+
+    music.play().catch(() => {
+      window.addEventListener("pointerdown", handleFirstInteraction, {
+        once: true,
+      });
+      window.addEventListener("keydown", handleFirstInteraction, {
+        once: true,
+      });
+    });
+
+    return () => {
+      removeUnlockListeners();
+      music.pause();
+      ambiance.pause();
+      musicRef.current = null;
+      ambianceRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    const nextVolume = Math.min(1, Math.max(0, volume));
+    if (musicRef.current) musicRef.current.volume = nextVolume;
+    if (ambianceRef.current) ambianceRef.current.volume = nextVolume;
+    saveVolume(nextVolume);
+  }, [volume]);
+
+  useEffect(() => {
+    const ambiance = ambianceRef.current;
+    if (!ambiance) return;
+
+    function removeAmbianceUnlockListeners() {
+      window.removeEventListener("pointerdown", handleAmbianceInteraction);
+      window.removeEventListener("keydown", handleAmbianceInteraction);
+    }
+
+    function handleAmbianceInteraction() {
+      ambiance.play().catch(() => {});
+      removeAmbianceUnlockListeners();
+    }
+
+    if (screen === "game") {
+      ambiance.play().catch(() => {
+        window.addEventListener("pointerdown", handleAmbianceInteraction, {
+          once: true,
+        });
+        window.addEventListener("keydown", handleAmbianceInteraction, {
+          once: true,
+        });
+      });
+      return removeAmbianceUnlockListeners;
+    }
+
+    removeAmbianceUnlockListeners();
+    ambiance.pause();
+    ambiance.currentTime = 0;
+  }, [screen]);
+
+  useEffect(() => {
+    if (screen !== "game") {
+      setPauseOpen(false);
+    }
+  }, [screen]);
+
+  useEffect(() => {
+    const handleKey = (event) => {
+      if (screen !== "game" || event.key !== "Escape") return;
+      event.preventDefault();
+      setPauseOpen((value) => !value);
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [screen]);
 
   const unlockAchievement = useCallback((id) => {
     const achievementToShow = achievementById.get(id);
@@ -623,19 +737,49 @@ export default function App() {
 
   const handleStart = useCallback(() => {
     resetRunState();
+    setPauseOpen(false);
     setScreen("game");
   }, [resetRunState]);
 
   const handleRestart = useCallback(() => {
     const events = resetRunState();
+    setPauseOpen(false);
     handleRobotGreeting(events);
   }, [handleRobotGreeting, resetRunState]);
+
+  const handleVolumeChange = useCallback((value) => {
+    setVolume(Math.min(1, Math.max(0, value)));
+  }, []);
+
+  const handleMainMenuFromPause = useCallback(() => {
+    setPauseOpen(false);
+    setAchievementBackScreen("main");
+    setScreen("main");
+  }, []);
+
+  const handleAchievementsFromPause = useCallback(() => {
+    setPauseOpen(false);
+    setAchievementBackScreen("game");
+    setScreen("achievements");
+  }, []);
+
+  const handleAchievementsFromMain = useCallback(() => {
+    setAchievementBackScreen("main");
+    setScreen("achievements");
+  }, []);
+
+  const handleAchievementsBack = useCallback(() => {
+    setScreen(achievementBackScreen);
+    setAchievementBackScreen("main");
+  }, [achievementBackScreen]);
 
   if (screen === "main") {
     return (
       <MainMenu
+        volume={volume}
+        onVolumeChange={handleVolumeChange}
         onPlay={() => setScreen("levels")}
-        onSucces={() => setScreen("achievements")}
+        onSucces={handleAchievementsFromMain}
       />
     );
   }
@@ -644,7 +788,7 @@ export default function App() {
     return (
       <AchievementsScreen
         unlockedIds={unlockedAchievementIds}
-        onBack={() => setScreen("main")}
+        onBack={handleAchievementsBack}
       />
     );
   }
@@ -655,7 +799,16 @@ export default function App() {
 
   return (
     <>
-      <BabylonScene onReady={handleRobotGreeting} />
+      <BabylonScene onReady={messages.length === 0 ? handleRobotGreeting : undefined} />
+      <PauseMenu
+        isOpen={pauseOpen}
+        volume={volume}
+        onClose={() => setPauseOpen(false)}
+        onOpen={() => setPauseOpen(true)}
+        onVolumeChange={handleVolumeChange}
+        onAchievements={handleAchievementsFromPause}
+        onMainMenu={handleMainMenuFromPause}
+      />
       <ChatOverlay
         messages={messages}
         suspicion={suspicion}

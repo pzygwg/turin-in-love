@@ -22,6 +22,78 @@ import "@babylonjs/loaders/glTF";
 const CAMERA_POS = new Vector3(-59.21, -2, -45.87);
 const CAMERA_TARGET = new Vector3(-47.7, -9.1, -76.6);
 const CAMERA_FOV = 0.9;
+const GUEST_ROBOT_PLACEMENTS = [
+  {
+    position: { x: -9.213, y: -20.273, z: -74.218 },
+    rotationY: 3.661,
+    scale: 0.07,
+  },
+  {
+    position: { x: -21.579, y: -16.977, z: -97.972 },
+    rotationY: 6.84,
+    scale: 0.07,
+  },
+  {
+    position: { x: -6.663, y: -16.381, z: -53.918 },
+    rotationY: 4.686,
+    scale: 0.07,
+  },
+  {
+    position: { x: -15.591, y: -17.854, z: -40.613 },
+    rotationY: 3.163,
+    scale: 0.07,
+  },
+  {
+    position: { x: -55.975, y: -19.834, z: -155.322 },
+    rotationY: 5.775,
+    scale: 0.07,
+  },
+  {
+    position: { x: -44.63, y: -16.014, z: -285.17 },
+    rotationY: 5.731,
+    scale: 0.07,
+  },
+  {
+    position: { x: -56.568, y: -17.235, z: -282.889 },
+    rotationY: 7.225,
+    scale: 0.07,
+  },
+  {
+    position: { x: -86.358, y: -13.255, z: -139.873 },
+    rotationY: 5.391,
+    scale: 0.07,
+  },
+  {
+    position: { x: -102.783, y: -14.081, z: -136.957 },
+    rotationY: 7.13,
+    scale: 0.07,
+  },
+  {
+    position: { x: -24.32, y: -17.162, z: -140.275 },
+    rotationY: 6.887,
+    scale: 0.07,
+  },
+  {
+    position: { x: -11.426, y: -17.756, z: -136.342 },
+    rotationY: 4.947,
+    scale: 0.07,
+  },
+  {
+    position: { x: -17.015, y: -16.639, z: -125.041 },
+    rotationY: 3.583,
+    scale: 0.07,
+  },
+  {
+    position: { x: -9.819, y: -17.162, z: -207.274 },
+    rotationY: 5.83,
+    scale: 0.07,
+  },
+  {
+    position: { x: -20.704, y: -17.781, z: -154.587 },
+    rotationY: 3.288,
+    scale: 0.07,
+  },
+];
 
 export default function BabylonScene({ onReady }) {
   const canvasRef = useRef(null);
@@ -292,6 +364,95 @@ export default function BabylonScene({ onReady }) {
         }
       });
 
+      const guestRobots = [];
+      let selectedGuestRobot = -1;
+      let lastGuestRobotJson = "";
+
+      const roundPlacement = (value) => Number(value.toFixed(3));
+      const robotPlacementJson = () =>
+        JSON.stringify(
+          guestRobots.map(({ root }) => ({
+            position: {
+              x: roundPlacement(root.position.x),
+              y: roundPlacement(root.position.y),
+              z: roundPlacement(root.position.z),
+            },
+            rotationY: roundPlacement(root.rotation.y || 0),
+            scale: roundPlacement(root.scaling.x),
+          })),
+          null,
+          2,
+        );
+
+      const activeRobotRoot = () =>
+        selectedGuestRobot >= 0 && guestRobots[selectedGuestRobot]
+          ? guestRobots[selectedGuestRobot].root
+          : robotRoot;
+
+      const addGuestRobot = (position, rotationY, scale = robotRoot.scaling.x) => {
+        const idx = guestRobots.length;
+        let cloneRoot = null;
+
+        if (typeof robotRoot.instantiateHierarchy === "function") {
+          cloneRoot = robotRoot.instantiateHierarchy(null, {}, (source, clone) => {
+            if (clone?.getTotalVertices?.() > 0) {
+              shadowGen.addShadowCaster(clone);
+            }
+          });
+        }
+
+        if (!cloneRoot && typeof robotRoot.clone === "function") {
+          cloneRoot = robotRoot.clone(`guestRobot_${idx}`, null);
+        }
+
+        if (!cloneRoot) return;
+
+        cloneRoot.name = `guestRobot_${idx}`;
+        cloneRoot.position = position.clone();
+        cloneRoot.scaling.setAll(scale);
+        cloneRoot.rotationQuaternion = null;
+        cloneRoot.rotation.y = rotationY;
+
+        cloneRoot.getChildMeshes?.().forEach((mesh) => {
+          if (mesh.getTotalVertices?.() > 0) {
+            shadowGen.addShadowCaster(mesh);
+          }
+        });
+
+        guestRobots.push({ root: cloneRoot });
+        selectedGuestRobot = guestRobots.length - 1;
+        lastGuestRobotJson = robotPlacementJson();
+      };
+
+      const deleteSelectedGuestRobot = () => {
+        if (selectedGuestRobot < 0 || !guestRobots[selectedGuestRobot]) return;
+        const [{ root }] = guestRobots.splice(selectedGuestRobot, 1);
+        root.dispose(false, true);
+        selectedGuestRobot =
+          guestRobots.length > 0
+            ? Math.min(selectedGuestRobot, guestRobots.length - 1)
+            : -1;
+        lastGuestRobotJson = robotPlacementJson();
+      };
+
+      const exportGuestRobotJson = () => {
+        lastGuestRobotJson = robotPlacementJson();
+        console.log("Guest robot placements JSON:", lastGuestRobotJson);
+        navigator.clipboard?.writeText(lastGuestRobotJson).catch(() => {});
+      };
+
+      GUEST_ROBOT_PLACEMENTS.forEach(({ position, rotationY, scale }) => {
+        addGuestRobot(
+          new Vector3(position.x, position.y, position.z),
+          rotationY,
+          scale,
+        );
+      });
+      selectedGuestRobot = -1;
+      lastGuestRobotJson = GUEST_ROBOT_PLACEMENTS.length
+        ? robotPlacementJson()
+        : "";
+
       // Debug mode (F2)
       let debugCamera = null;
       const keysDown = new Set();
@@ -380,8 +541,9 @@ export default function BabylonScene({ onReady }) {
 
         if (editingRobot) {
           e.preventDefault();
-          const p = robotRoot.position;
-          const s = robotRoot.scaling;
+          const targetRobot = activeRobotRoot();
+          const p = targetRobot.position;
+          const s = targetRobot.scaling;
           switch (e.code) {
             case "ArrowUp":
               p.z -= ROBOT_MOVE_STEP;
@@ -412,13 +574,53 @@ export default function BabylonScene({ onReady }) {
               s.setAll(s.x + ROBOT_SCALE_STEP);
               break;
             case "KeyR":
-              robotRoot.rotation.y += 0.1;
+              targetRobot.rotation.y += 0.1;
+              break;
+            case "Delete":
+            case "Backspace":
+              deleteSelectedGuestRobot();
+              editingRobot = false;
+              debugCamera?.attachControl(canvas, true);
               break;
           }
+          lastGuestRobotJson = robotPlacementJson();
         }
 
         // Cone light controls (only in debug mode, not in robot edit mode)
         if (!editingRobot) {
+          if (e.code === "KeyB") {
+            const cam = debugCamera || camera;
+            const rotationY =
+              cam.rotation?.y !== undefined ? cam.rotation.y + Math.PI : robotRoot.rotation.y;
+            addGuestRobot(cam.position.clone(), rotationY);
+            return;
+          }
+
+          if (e.code === "KeyY" && guestRobots.length > 0) {
+            selectedGuestRobot =
+              (selectedGuestRobot - 1 + guestRobots.length) %
+              guestRobots.length;
+            return;
+          }
+
+          if (e.code === "KeyU" && guestRobots.length > 0) {
+            selectedGuestRobot = (selectedGuestRobot + 1) % guestRobots.length;
+            return;
+          }
+
+          if (
+            (e.code === "Delete" || e.code === "Backspace") &&
+            selectedGuestRobot >= 0
+          ) {
+            deleteSelectedGuestRobot();
+            return;
+          }
+
+          if (e.code === "KeyV") {
+            exportGuestRobotJson();
+            return;
+          }
+
           // L = place new cone light at camera position, pointing down
           if (e.code === "KeyL") {
             const cam = debugCamera || camera;
@@ -600,9 +802,27 @@ export default function BabylonScene({ onReady }) {
         if (debugMode) {
           const cam = debugCamera || camera;
           const camPos = cam.position;
-          const rp = robotRoot.position;
-          const rs = robotRoot.scaling.x;
-          const ry = robotRoot.rotation.y;
+          const selectedRobot = activeRobotRoot();
+          const rp = selectedRobot.position;
+          const rs = selectedRobot.scaling.x;
+          const ry = selectedRobot.rotation.y;
+          const selectedRobotLabel =
+            selectedGuestRobot >= 0
+              ? `GUEST ${selectedGuestRobot}`
+              : "MIRA";
+          let guestRobotInfo = `\n--- Guest Robots (${guestRobots.length}) ---\n`;
+          guestRobotInfo += `B=Add at camera  Y/U=Cycle  Delete=Remove  V=Copy JSON\n`;
+          if (guestRobots.length > 0) {
+            guestRobots.forEach(({ root }, i) => {
+              const p = root.position;
+              const sel = i === selectedGuestRobot ? " ◄" : "";
+              guestRobotInfo += `[${i}]${sel} pos:(${p.x.toFixed(2)}, ${p.y.toFixed(2)}, ${p.z.toFixed(2)}) rotY:${root.rotation.y.toFixed(2)} scale:${root.scaling.x.toFixed(2)}\n`;
+            });
+          }
+          if (lastGuestRobotJson) {
+            guestRobotInfo += `\nJSON:\n${lastGuestRobotJson}\n`;
+          }
+
           let coneInfo = `\n--- Cone Lights (${coneLights.length}) ---\n`;
           if (coneLights.length === 0) {
             coneInfo += `L = place cone light at camera pos\n`;
@@ -621,16 +841,17 @@ export default function BabylonScene({ onReady }) {
           debugDiv.textContent =
             `DEBUG MODE (F2 to exit)\n` +
             `ZQSD/WASD to move, mouse to look\n` +
-            `Tab to toggle robot edit mode\n\n` +
+            `Tab to toggle selected robot edit mode\n\n` +
             `Camera pos: (${camPos.x.toFixed(2)}, ${camPos.y.toFixed(2)}, ${camPos.z.toFixed(2)})\n` +
             `Camera FOV: ${cam.fov.toFixed(2)}\n\n` +
-            `--- Robot ${editingRobot ? "[EDITING]" : "(Tab to edit)"} ---\n` +
+            `--- Robot ${selectedRobotLabel} ${editingRobot ? "[EDITING]" : "(Tab to edit)"} ---\n` +
             `Position: (${rp.x.toFixed(2)}, ${rp.y.toFixed(2)}, ${rp.z.toFixed(2)})\n` +
             `Scale:    ${rs.toFixed(2)}\n` +
             `Rot Y:    ${ry.toFixed(2)}\n` +
             (editingRobot
-              ? `Arrows=XZ  PgUp/PgDn=Y  +/-=Scale  R=Rotate`
+              ? `Arrows=XZ  PgUp/PgDn=Y  +/-=Scale  R=Rotate  Delete=Remove selected guest`
               : ``) +
+            guestRobotInfo +
             coneInfo;
         }
       });
@@ -647,6 +868,8 @@ export default function BabylonScene({ onReady }) {
           cone.dispose();
         });
         coneLights.length = 0;
+        guestRobots.forEach(({ root }) => root.dispose(false, true));
+        guestRobots.length = 0;
         debugDiv.remove();
       };
 

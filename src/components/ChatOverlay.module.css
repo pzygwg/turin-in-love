@@ -185,7 +185,7 @@
 .phasePill {
   position: absolute;
   top: 18px;
-  left: 18px;
+  left: 66px;
   max-width: min(52vw, 360px);
   text-transform: uppercase;
   letter-spacing: 0;
@@ -442,8 +442,8 @@
 
   .phasePill {
     top: 12px;
-    left: 12px;
-    max-width: calc(100vw - 124px);
+    left: 60px;
+    max-width: calc(100vw - 172px);
   }
 
   .historyBtn {

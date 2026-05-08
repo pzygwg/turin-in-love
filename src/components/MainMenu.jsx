@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   Engine,
   Scene,
@@ -16,8 +16,9 @@ import {
 import "@babylonjs/loaders/glTF";
 import styles from "./MainMenu.module.css";
 
-export default function MainMenu({ onPlay, onSucces }) {
+export default function MainMenu({ volume, onVolumeChange, onPlay, onSucces }) {
   const canvasRef = useRef(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -175,12 +176,34 @@ export default function MainMenu({ onPlay, onSucces }) {
             </button>
           </div>
         </div>
-        <button className={styles.btnSettings} aria-label="Settings">
+        <button
+          type="button"
+          className={styles.btnSettings}
+          onClick={() => setSettingsOpen((value) => !value)}
+          aria-label="Settings"
+          aria-expanded={settingsOpen}
+        >
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="3" />
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
           </svg>
         </button>
+        {settingsOpen && (
+          <div className={styles.settingsPanel}>
+            <label className={styles.volumeControl}>
+              <span>Volume</span>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={volume}
+                onChange={(event) => onVolumeChange(Number(event.target.value))}
+              />
+              <output>{Math.round(volume * 100)}%</output>
+            </label>
+          </div>
+        )}
       </div>
     </div>
   );
